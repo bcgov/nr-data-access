@@ -1,5 +1,6 @@
 {
-  "author": "BC Government Forestry Suite of Applications Starter Template",
+  "name": "nr-data-access-api",
+  "author": "NRIDS Architecture and Devops",
   "license": "Apache-2.0",
   "main": "index.js",
   "scripts": {

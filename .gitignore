@@ -112,6 +112,7 @@ test-report.xml
 .volumes
 .idea
 *.iml
+!frontend/app/bin
 **/bin
 **/build
 **/dist

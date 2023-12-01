@@ -25,6 +25,33 @@ services:
       test: ["CMD", "pg_isready", "-U", *POSTGRES_USER]
     ports: ["5432:5432"]
 
+  chefs-keycloak:
+    image: quay.io/keycloak/keycloak:18.0
+    volumes:
+      - type: bind
+        source: ./realm-export.json
+        target: /tmp/realm-export.json
+        read_only: true
+    ports:
+      - 8082:8082
+    environment:
+      - DB_VENDOR=POSTGRES
+      - DB_ADDR=database
+      - DB_USER=postgres
+      - DB_PASSWORD=default
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KEYCLOAK_HTTPS_REQUIRED=false
+    depends_on:
+      - database
+    restart: unless-stopped
+    command:
+      - "start-dev"
+      - "--http-port=8082"
+      - "-Dkeycloak.migration.action=import"
+      - "-Dkeycloak.migration.provider=singleFile"
+      - "-Dkeycloak.migration.file=/tmp/realm-export.json"
+      - "-Dkeycloak.migration.strategy=OVERWRITE_EXISTING"
   migrations:
     image: flyway/flyway:9-alpine
     container_name: migrations

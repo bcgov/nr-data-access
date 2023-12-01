@@ -1,0 +1,88 @@
+{
+  "db": {
+    "database": "chefs",
+    "host": "localhost",
+    "port": "5432",
+    "username": "app"
+  },
+  "files": {
+    "uploads": {
+      "enabled": "true",
+      "fileCount": "1",
+      "fileKey": "files",
+      "fileMaxSize": "25MB",
+      "fileMaxSizeBytes": "25000000",
+      "fileMinSize": "0KB",
+      "path": "files"
+    },
+    "permanent": "objectStorage",
+    "localStorage": {
+      "path": ""
+    },
+    "objectStorage": {
+      "accessKeyId": "bcgov-citz-ccft",
+      "bucket": "chefs",
+      "endpoint": "https://commonservices.objectstore.gov.bc.ca",
+      "key": "chefs/dev/"
+    }
+  },
+  "frontend": {
+    "adminDashboardUrl": "",
+    "apiPath": "api/v1",
+    "basePath": "/app",
+    "keycloak": {
+      "clientId": "chefs-frontend",
+      "realm": "chefs",
+      "serverUrl": "https://dev.loginproxy.gov.bc.ca/auth"
+    }
+  },
+  "server": {
+    "apiPath": "/api/v1",
+    "basePath": "/app",
+    "bodyLimit": "30mb",
+    "keycloak": {
+      "clientId": "chefs",
+      "realm": "chefs",
+      "serverUrl": "https://dev.loginproxy.gov.bc.ca/auth"
+    },
+    "logLevel": "http",
+    "port": "8080",
+    "rateLimit": {
+      "public": {
+        "windowMs": "60000",
+        "max": "60"
+      }
+    }
+  },
+  "serviceClient": {
+    "commonServices": {
+      "ches": {
+        "endpoint": "https://ches-dev.api.gov.bc.ca/api",
+        "tokenEndpoint": "https://dev.loginproxy.gov.bc.ca/auth/realms/comsvcauth/protocol/openid-connect/token",
+        "clientId": "CHES_CLIENT_ID",
+        "clientSecret": "CHES_CLIENT_SECRET"
+      },
+      "cdogs": {
+        "endpoint": "https://cdogs-dev.api.gov.bc.ca/api",
+        "tokenEndpoint": "https://dev.loginproxy.gov.bc.ca/auth/realms/comsvcauth/protocol/openid-connect/token",
+        "clientId": "CDOGS_CLIENT_ID",
+        "clientSecret": "CDOGS_CLIENT_SECRET"
+      }
+    }
+  },
+  "customBcAddressFormioComponent": {
+    "apikey": "xxxxxxxxxxxxxxx",
+    "bcAddressURL": "https://geocoder.api.gov.bc.ca/addresses.json",
+    "queryParameters": {
+      "echo": false,
+      "brief": true,
+      "minScore": 55,
+      "onlyCivic": true,
+      "maxResults": 15,
+      "autocomplete": true,
+      "matchAccuracy": 100,
+      "matchPrecision": "occupant, unit, site, civic_number, intersection, block, street, locality, province",
+      "precisionPoints": 100
+    }
+  }
+}

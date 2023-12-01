@@ -1,25 +1,17 @@
-# Build static files
-# Node Bullseye has npm
-FROM node:20.10.0-bullseye-slim AS build
+FROM docker.io/node:18.18.2-alpine
 
-# Install packages, build and keep only prod packages
-WORKDIR /app
-COPY *.json *.ts index.html ./
-COPY ./src ./src
-RUN npm ci --ignore-scripts --no-update-notifier --omit=dev && \
-    npm run build
-
-# Deploy container
-# Caddy serves static files
-FROM caddy:2.7.5-alpine
-RUN apk add --no-cache ca-certificates
-
-# Copy static files and run formatting
-COPY --from=build /app/dist /srv
-COPY Caddyfile /etc/caddy/Caddyfile
-RUN caddy fmt --overwrite /etc/caddy/Caddyfile
-
-# Ports, health check and non-root user
-EXPOSE 3000 3001
-HEALTHCHECK --interval=30s --timeout=3s CMD curl -f http://localhost/:3001/health
-USER 1001
+ENV NO_UPDATE_NOTIFIER=true
+WORKDIR /opt/app-root/src/app
+COPY . /opt/app-root/src
+RUN npm run all:ci \
+  && npm run all:build \
+  && npm run frontend:purge \
+  && npm run components:clean \
+  && npm run components:purge
+EXPOSE 8000
+# Create the /.npm directory and grant access to group 0 to allow npm v9 to work
+# See: https://docs.openshift.com/container-platform/4.11/openshift_images/create-images.html#use-uid_create-images
+RUN mkdir /.npm
+RUN chgrp -R 0 /.npm && \
+    chmod -R g=u /.npm
+CMD ["npm", "run", "start"]

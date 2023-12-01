@@ -6,51 +6,63 @@ global:
   tag: ~
   autoscaling: true
   secrets:
-    enabled: true
-    databasePassword: ~
-    databaseUser: ~
-    databaseName: ~
+    enabled: false
+    databasePassword: default
+    databaseUser: default
+    databaseName: default
+    SERVER_KC_CLIENTID: default
+    SERVER_KC_CLIENTSECRET: default
+    SC_CS_CHES_CLIENT_ID: default
+    SC_CS_CHES_CLIENT_SECRET: default
+    SC_CS_CDOGS_CLIENT_ID: default
+    SC_CS_CDOGS_CLIENT_SECRET: default
+    FILES_OBJECTSTORAGE_ACCESSKEYID: default
+    APITOKEN: default
     annotation:
       helm.sh/policy: "keep"
   domain: "apps.silver.devops.gov.bc.ca" # it is required, apps.silver.devops.gov.bc.ca for silver cluster
   openshiftImageRegistry: "image-registry.openshift-image-registry.svc:5000"
   databaseAlias: bitnami-pg # this is the alias for bitnami postgres, change it based on db type(crunchy,patroni...) and alias used in the chart.
 
-backend:
+workflows:
   enabled: true
   deployment: # can be either a statefulSet or a deployment not both
     enabled: true
   containers:
-    - name: backend
+    - name: workflows
       registry: '{{ .Values.global.registry }}'
       repository: '{{ .Values.global.repository }}' # example, it includes registry and repository
-      image: backend # the exact component name, be it backend, api-1 etc...
+      image: workflows # the exact component name, be it backend, api-1 etc...
       tag: '{{ .Values.global.tag }}' # the tag of the image, it can be latest, 1.0.0 etc..., or the sha256 hash
       env:
         fromGlobalSecret:
-          - name: POSTGRES_PASSWORD
-            key: password
-          - name: POSTGRES_USER
-            key: databaseUser
           - name: POSTGRES_DATABASE
-            key: databaseName
-        fromValues:
+            secretName: '{{ .Release.Name }}-crunchy-pguser-nrdataacessworkflows'
+            key: dbname
           - name: POSTGRES_HOST
-            value: '{{ .Release.Name }}-{{.Values.global.databaseAlias}}'
+            secretName: '{{ .Release.Name }}-crunchy-pguser-nrdataacessworkflows'
+            key: pgbouncer-host
+          - name: POSTGRES_USER
+            secretName: '{{ .Release.Name }}-crunchy-pguser-nrdataacessworkflows'
+            key: user
+          - name: POSTGRES_PASSWORD
+            secretName: '{{ .Release.Name }}-crunchy-pguser-nrdataacessworkflows'
+            key: password
+
       ports:
         - name: http
           containerPort: 3000
           protocol: TCP
       resources: # this is optional
         limits:
-          cpu: 250m
-          memory: 250Mi
-        requests:
           cpu: 100m
           memory: 150Mi
+        requests:
+          cpu: 30m
+          memory: 50Mi
       readinessProbe:
         httpGet:
-          path: /api
+          path: /q/health
           port: 3000
           scheme: HTTP
         initialDelaySeconds: 5
@@ -62,133 +74,81 @@ backend:
         successThreshold: 1
         failureThreshold: 3
         httpGet:
-          path: /api
+          path: /q/health
           port: 3000
           scheme: HTTP
         initialDelaySeconds: 15
         periodSeconds: 30
         timeoutSeconds: 5
-  initContainers:
-    - name: database-migrations
-      registry: '{{ .Values.global.registry }}'
-      repository: '{{ .Values.global.repository }}' # example, it includes registry and repository
-      image: migrations
-      tag: '{{ .Values.global.tag }}'
-      env:
-        fromGlobalSecret:
-          - name: FLYWAY_PASSWORD
-            key: databasePassword
-          - name: FLYWAY_URL
-            key: databaseJDBCURLNoCreds
-          - name: FLYWAY_USER
-            key: databaseUser
-        fromValues:
-          - name: FLYWAY_BASELINE_ON_MIGRATE
-            value: "true"
-          - name: FLYWAY_DEFAULT_SCHEMA
-            value: "USERS"
-      resources:
-        limits:
-          cpu: 500m
-          memory: 250Mi
-        requests:
-          cpu: 200m
-          memory: 150Mi
-  autoscaling:
-    enabled: true
-    minReplicas: 3
-    maxReplicas: 7
-    targetCPUUtilizationPercentage: 80 # this percentage from request cpu
-    behavior:
-      scaleDown:
-        stabilizationWindowSeconds: 300
-        policies:
-          - type: Percent
-            value: 10
-            periodSeconds: 60
-          - type: Pods
-            value: 2
-            periodSeconds: 60
-        selectPolicy: Min
-      scaleUp:
-        stabilizationWindowSeconds: 0
-        policies:
-          - type: Percent
-            value: 100
-            periodSeconds: 30
-          - type: Pods
-            value: 2
-            periodSeconds: 30
-        selectPolicy: Max
-  vault:
-    enabled: false
-    entrypoint: ~ # the entrypoint for vault, this is the override of container command.
-    role: ~ #licenseplate-prod or licenseplate-nonprod
-    secretPaths: # the paths where secrets live. dev/api-1, dev/api-2, test/api-1 etc...
-      - dev/api-1
-      - dev/api-2
-      - test/api-1
-      - test/api-2
-      - prod/api-1
-      - prod/api-2
-    resources:
-      limits:
-        cpu: 50m
-        memory: 50Mi
-      requests:
-        cpu: 50m
-        memory: 25Mi
-  service:
-    enabled: true
-    type: ClusterIP
-    ports:
-      - name: http
-        port: 80
-        targetPort: 3000 # the container port where the application is listening on
-        protocol: TCP
-  nodeSelector: { }
-  tolerations: [ ]
-  affinity: { }
 
 frontend:
-  enabled: true
+  enabled: false
   deployment: # can be either a statefulSet or a deployment not both
     enabled: true
   configmap:
     enabled: true
     data: # below is just for example.
-      config.js: |-
-        const envConfig = (() => {
-          return {
-            "VITE_DEPLOY_ENVIRONMENT":"{{ .Release.Name }}-{{ .Release.Namespace }}"
-          };
-        })();
-      config.prod.js: |-
-        const envConfig = (() => {
-          return {
-            "VITE_DEPLOY_ENVIRONMENT":"static"
-          };
-        })();
+      VITE_CONTACT: 'omprakash.2.mishra@gov.bc.ca'
+      VITE_HOWTOURL: 'https://howto.gov.bc.ca'
+      VITE_CHEFSTOURURL: 'https://chefstour.gov.bc.ca'
+      FRONTEND_APIPATH: api/v1
+      VITE_FRONTEND_BASEPATH: /app
+      FRONTEND_BASEPATH: /app
+      FRONTEND_ENV: dev
+      FRONTEND_KC_REALM: chefs
+      FRONTEND_KC_SERVERURL: https://dev.loginproxy.gov.bc.ca/auth
+      SC_CS_CHES_ENDPOINT: https://ches-dev.api.gov.bc.ca/api
+      SC_CS_CDOGS_ENDPOINT: https://cdogs-dev.api.gov.bc.ca/api
+      SC_CS_CHES_TOKEN_ENDPOINT: https://dev.loginproxy.gov.bc.ca/auth/realms/comsvcauth/protocol/openid-connect/token
+      SC_CS_CDOGS_TOKEN_ENDPOINT: https://dev.loginproxy.gov.bc.ca/auth/realms/comsvcauth/protocol/openid-connect/token
+      SERVER_APIPATH: /api/v1
+      SERVER_BASEPATH: /app
+      SERVER_BODYLIMIT: 30mb
+      SERVER_KC_PUBLICKEY: $PUBLIC_KEY
+      SERVER_KC_REALM: standard
+      SERVER_KC_SERVERURL: https://dev.loginproxy.gov.bc.ca/auth
+      SERVER_LOGLEVEL:  http
+      SERVER_PORT: 8080
+      FILES_UPLOADS_DIR:
+      FILES_UPLOADS_ENABLED: true
+      FILES_UPLOADS_FILECOUNT: 1
+      FILES_UPLOADS_FILEKEY: files
+      FILES_UPLOADS_FILEMAXSIZE: 25MB
+      FILES_UPLOADS_FILEMINSIZE: 0KB
+      FILES_UPLOADS_PATH: files
+      FILES_PERMANENT: objectStorage
+      FILES_LOCALSTORAGE_PATH:
+      FILES_OBJECTSTORAGE_BUCKET: '{{ .Values.global.objectstorage.bucket }}'
+      FILES_OBJECTSTORAGE_ENDPOINT: https://nrs.objectstore.gov.bc.ca
+      FILES_OBJECTSTORAGE_KEY: chefs/dev/
+      NODE_ENV: production
+      VITE_CHEFS_GEO_ADDRESS_APIURL: https://geocoder.api.gov.bc.ca/addresses.json
+      VITE_CHEFS_ADVANCE_GEO_ADDRESS_APIURL: https://geocoder.api.gov.bc.ca/addresses.json
+      VITE_BC_GEO_ADDRESS_APIURL: https://geocoder.api.gov.bc.ca/addresses.json
   containers:
     - name: frontend
       registry: '{{ .Values.global.registry }}'
       repository: '{{ .Values.global.repository }}' # example, it includes registry and repository
       image: frontend # the exact component name, be it backend, api-1 etc...
       tag: '{{ .Values.global.tag }}' # the tag of the image, it can be latest, 1.0.0 etc..., or the sha256 hash
-      securityContext:
-        capabilities:
-          add: [ "NET_BIND_SERVICE" ]
+      envFrom:
+        - configMapRef:
+        - secretRef:
       env:
-        fromValues:
-          - name: BACKEND_URL
-            value: "http://{{ .Release.Name }}-backend"
-          - name: LOG_LEVEL
-            value: "info"
-        fromLocalConfigmap: # just for example purpose.
-          - name: frontend-configmap
-            key: config.js
-          - name: frontend-prod-configmap
-            key: config.prod.js
+        fromGlobalSecret:
+          - name: DB_DATABASE
+            secretName: '{{ .Release.Name }}-crunchy-pguser-nrdataaccessfrontend'
+            key: dbname
+          - name: DB_HOST
+            secretName: '{{ .Release.Name }}-crunchy-pguser-nrdataaccessfrontend'
+            key: pgbouncer-host
+          - name: DB_USERNAME
+            secretName: '{{ .Release.Name }}-crunchy-pguser-nrdataaccessfrontend'
+            key: user
+          - name: DB_PASSWORD
+            secretName: '{{ .Release.Name }}-crunchy-pguser-nrdataaccessfrontend'
+            key: password
+
       ports:
         - name: http
           containerPort: 3000
@@ -263,22 +223,32 @@ frontend:
     targetPort: http # look at line#164 refer to the name.
 
 crunchy: # enable it for TEST and PROD, for PR based pipelines simply use single postgres
-  enabled: false
-
-  crunchyImage: artifacts.developer.gov.bc.ca/bcgov-docker-local/crunchy-postgres-gis:ubi8-15.2-3.3-0
+  enabled: true
+  users:
+    - name: postgres
+      databases:
+        - postgres
+    - name: nrdataaccessfrontend
+      databases:
+        - nrdataaccessfrontend
+    - name: nrdataacessworkflows
+      databases:
+        - nrdataacessworkflows
+    - name: nrdataacessreporting
+      databases:
+        - nrdataacessreporting
 
   postgresVersion: 15
-  postGISVersion: '3.3'
   imagePullPolicy: Always
   instances:
     name: ha # high availability
-    replicas: 1 # 2 or 3 for high availability in TEST and PROD.
+    replicas: 2 # 2 or 3 for high availability in TEST and PROD.
     metadata:
       annotations:
         prometheus.io/scrape: 'true'
         prometheus.io/port: '9187'
     dataVolumeClaimSpec:
-      storage: 120Mi
+      storage: 420Mi
       storageClassName: netapp-block-standard
     requests:
       cpu: 25m
@@ -295,7 +265,6 @@ crunchy: # enable it for TEST and PROD, for PR based pipelines simply use single
         memory: 64Mi
 
   pgBackRest:
-    enabled: false
     image: # it's not necessary to specify an image as the images specified in the Crunchy Postgres Operator will be pulled by default
     retention: "1" # Ideally a larger number such as 30 backups/days
     # If retention-full-type set to 'count' then the oldest backups will expire when the number of backups reach the number defined in retention
@@ -357,111 +326,52 @@ crunchy: # enable it for TEST and PROD, for PR based pipelines simply use single
         cpu: 50m
         memory: 128Mi
 
-bitnami-pg:
+keycloak:
   enabled: true
-  image:
-    registry: ghcr.io
-    repository: bcgov/nr-containers/bitnami/postgresql
-    tag: 15.5.0
-  auth:
-    existingSecret: '{{ .Release.Name }}'
-    username: 'quickstart'
-    database: quickstart
-  shmVolume:
+  podSecurityContext:
     enabled: false
-  backup:
+  containerSecurityContext:
     enabled: false
-    cronjob:
-      containerSecurityContext: { }
+  livenessProbe:
+    enabled: true
+    initialDelaySeconds: 300
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 30
+    successThreshold: 1
+  readinessProbe:
+    enabled: true
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 50
+    successThreshold: 1
+  resources:
+    requests:
+      cpu: 100m
+      memory: 300Mi
+    limits:
+      cpu: 250m
+      memory: 500Mi
+  postgresql:
+    enabled: true
+    shmVolume:
+      enabled: false
+    primary:
       podSecurityContext:
         enabled: false
-      storage:
-        size: 200Mi
-  primary:
-    persistence:
-      enabled: true
-      storageClass: netapp-file-standard
-      accessModes:
-        - ReadWriteOnce
-      size: 100Mi
-    containerSecurityContext:
-      enabled: false
-    podSecurityContext:
-      enabled: false
-    initdb:
-      scripts: # remove the below script, if POSTGIS is not required.
-        postgis.sh: |
-          #!/bin/sh
-          PGPASSWORD=$POSTGRES_PASSWORD psql -U postgres -d postgres -c "CREATE EXTENSION postgis;"
-    resources:
-      requests:
-        cpu: 50m
-        memory: 150Mi
-      limits:
-        cpu: 150m
-        memory: 250Mi
-
-backup:
-  enabled: true
-  pvc:
-    enabled: true
-    size: 256Mi
-    storageClassName: netapp-file-standard
-    accessModes: ReadWriteOnce
-  cronjob:
-    enabled: true
-    volumes:
-      - name: "{{.Release.Name}}-backup"
-        persistentVolumeClaim:
-          claimName: "{{.Release.Name}}-backup"
-    restartPolicy: "Never"
-    schedule: "0 0 * * *"
-    concurrencyPolicy: "Replace"
-    failedJobsHistoryLimit: 7
-    successfulJobsHistoryLimit: 30
-    startingDeadlineSeconds: 3600
-  containers:
-    - name: backup
-      registry: 'docker.io'
-      repository: 'bcgovimages' # example, it includes registry and repository
-      image: backup-container # the exact component name, be it backend, api-1 etc...
-      tag: latest # the tag of the image, it can be latest, 1.0.0 etc..., or the sha256 hash
-      command:
-        - "/bin/bash"
-        - "-c"
-        - "/backup.sh -1"
-      volumeMounts:
-        - mountPath: "/backups/"
-          name: "{{.Release.Name}}-backup"
-      env:
-        fromValues:
-          - name: BACKUP_DIR
-            value: "/backups/"
-          - name: BACKUP_STRATEGY
-            value: "rolling"
-          - name: NUM_BACKUPS
-            value: '5'
-          - name: DAILY_BACKUPS
-            value: '7'
-          - name: WEEKLY_BACKUPS
-            value: '4'
-          - name: MONTHLY_BACKUPS
-            value: '1'
-          - name: DATABASE_SERVICE_NAME # depends on which chart being used, adjust accordingly.
-            value: '{{.Release.Name}}-{{.Values.global.databaseAlias}}'
-          - name: DEFAULT_PORT
-            value: "5432"
-        fromGlobalSecret:
-          - name: DATABASE_PASSWORD
-            key: password
-          - name: POSTGRESQL_DATABASE
-            key: databaseName
-          - name: DATABASE_USER
-            key: databaseUser
+      containerSecurityContext:
+        enabled:
+          false
       resources:
-        limits:
-          cpu: 50m
-          memory: 256Mi
         requests:
-          cpu: 20m
-          memory: 128Mi
+          cpu: 100m
+          memory: 250Mi
+        limits:
+          cpu: 250m
+          memory: 500Mi
+      persistence:
+        size: 150Mi
+        storageClass: netapp-block-standard
+
+
