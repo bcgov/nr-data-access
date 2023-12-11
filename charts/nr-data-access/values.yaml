@@ -17,6 +17,8 @@ global:
     SC_CS_CDOGS_CLIENT_ID: default
     SC_CS_CDOGS_CLIENT_SECRET: default
     FILES_OBJECTSTORAGE_ACCESSKEYID: default
+    FILES_OBJECTSTORAGE_SECRETACCESSKEY: default
+    FILES_OBJECTSTORAGE_BUCKET: default
     APITOKEN: default
     annotation:
       helm.sh/policy: "keep"
@@ -104,7 +106,6 @@ frontend:
       SERVER_APIPATH: /api/v1
       SERVER_BASEPATH: /app
       SERVER_BODYLIMIT: 30mb
-      SERVER_KC_PUBLICKEY: $PUBLIC_KEY
       SERVER_KC_REALM: standard
       SERVER_KC_SERVERURL: https://dev.loginproxy.gov.bc.ca/auth
       SERVER_LOGLEVEL:  http
@@ -118,9 +119,9 @@ frontend:
       FILES_UPLOADS_PATH: files
       FILES_PERMANENT: objectStorage
       FILES_LOCALSTORAGE_PATH:
-      FILES_OBJECTSTORAGE_BUCKET: '{{ .Values.global.objectstorage.bucket }}'
+      FILES_OBJECTSTORAGE_BUCKET: '{{ .Values.global.FILES_OBJECTSTORAGE_BUCKET }}'
       FILES_OBJECTSTORAGE_ENDPOINT: https://nrs.objectstore.gov.bc.ca
-      FILES_OBJECTSTORAGE_KEY: chefs/dev/
+      FILES_OBJECTSTORAGE_KEY: '{{ .Values.global.secrets.FILES_OBJECTSTORAGE_ACCESSKEYID }}'
       NODE_ENV: production
       VITE_CHEFS_GEO_ADDRESS_APIURL: https://geocoder.api.gov.bc.ca/addresses.json
       VITE_CHEFS_ADVANCE_GEO_ADDRESS_APIURL: https://geocoder.api.gov.bc.ca/addresses.json
