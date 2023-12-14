@@ -19,7 +19,7 @@ COMMENT ON COLUMN status_code.description IS 'Description of the status';
 COMMENT ON COLUMN status_code.effective_date IS 'Date the status becomes effective';
 COMMENT ON COLUMN status_code.expiry_date IS 'Date the status expires';
 -- comments on table
-COMMENT ON TABLE STATUS_CODES IS 'Table to store status codes related to the workflows that will take place from submitting a request to the final decision';
+COMMENT ON TABLE status_code IS 'Table to store status codes related to the workflows that will take place from submitting a request to the final decision';
 
 CREATE TABLE data_security_classification
 (
@@ -169,7 +169,7 @@ CREATE TABLE approval
     approver_idir      VARCHAR(255),
     approver_idir_guid VARCHAR(255),
     approver_email     VARCHAR(255),
-    create_timestamp   TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    create_timestamp   TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 -- Add foreign key to request table
 ALTER TABLE approval
