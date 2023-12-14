@@ -61,7 +61,7 @@ CREATE INDEX requester_email_idx
 
 -- comments on table columns
 COMMENT ON COLUMN requester.id IS 'Primary key';
-COMMENT ON COLUMN requester.name IS 'Full Name of the requester';
+COMMENT ON COLUMN requester.full_name IS 'Full Name of the requester';
 COMMENT ON COLUMN requester.idir IS 'IDIR name of the requester';
 COMMENT ON COLUMN requester.idir_guid IS 'IDIR GUID of the requester, this uniquely identifies the user';
 COMMENT ON COLUMN requester.email IS 'Email of the requester';
