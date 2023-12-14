@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?><database name="default" schema="data_access" type="PostgreSQL - 16.1 (Debian 16.1-1.pgdg120+1)">
+   <sequences>
+      <sequence increment="1" name="approval_id_seq" startValue="1"/>
+      <sequence increment="1" name="data_security_classification_id_seq" startValue="1"/>
+      <sequence increment="1" name="project_id_seq" startValue="1"/>
+      <sequence increment="1" name="request_id_seq" startValue="1"/>
+      <sequence increment="1" name="requester_id_seq" startValue="1"/>
+      <sequence increment="1" name="status_code_id_seq" startValue="1"/>
+   </sequences>
+   <tables>
+      <table name="approval" remarks="Table to store the approval data. For each state of Approval (Data Custodian, DBA, Security) a new row will be inserted to this table. It servers the purpose of tracking the approval process." schema="data_access" type="TABLE">
+         <column autoUpdated="true" defaultValue="nextval('data_access.approval_id_seq'::regclass)" digits="0" id="0" name="id" nullable="false" remarks="Primary key, Auto Generated Number by Postgres" size="19" type="bigserial" typeCode="-5"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="request_id" nullable="false" remarks="Foreign key to the request table" size="19" type="int8" typeCode="-5">
+            <parent column="id" foreignKey="approval_request_id_fk" implied="false" onDeleteCascade="false" schema="data_access" table="request"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="status_code_id" nullable="false" remarks="Foreign key to the status code table" size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="approval_status_code_id_fk" implied="false" onDeleteCascade="false" schema="data_access" table="status_code"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="approver_idir" nullable="true" remarks="IDIR name of the person who approved the request, it is combined with status as there could be multiple levels of approval (DBA, Security, etc)" size="255" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="approver_idir_guid" nullable="true" remarks="IDIR GUID of the person who approved the request, it is combined with status as there could be multiple levels of approval (DBA, Security, etc)" size="255" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="approver_email" nullable="true" remarks="Email of the person who approved the request, it is combined with status as there could be multiple levels of approval (DBA, Security, etc)" size="255" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="6" id="6" name="create_timestamp" nullable="false" remarks="" size="29" type="timestamp" typeCode="93"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="approval_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="approval_request_id_idx" unique="false">
+            <column ascending="true" name="request_id"/>
+         </index>
+         <index name="approval_status_code_id_idx" unique="false">
+            <column ascending="true" name="status_code_id"/>
+         </index>
+      </table>
+      <table name="data_security_classification" remarks="" schema="data_access" type="TABLE">
+         <column autoUpdated="true" defaultValue="nextval('data_access.data_security_classification_id_seq'::regclass)" digits="0" id="0" name="id" nullable="false" remarks="" size="5" type="smallserial" typeCode="5">
+            <child column="data_security_classification_id" foreignKey="request_data_security_classification_id_fk" implied="false" onDeleteCascade="false" schema="data_access" table="request"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="code" nullable="false" remarks="" size="255" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="description" nullable="false" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="data_security_classification_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+      </table>
+      <table name="flyway_schema_history" remarks="" schema="data_access" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="installed_rank" nullable="false" remarks="" size="10" type="int4" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="version" nullable="true" remarks="" size="50" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="description" nullable="false" remarks="" size="200" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="type" nullable="false" remarks="" size="20" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="script" nullable="false" remarks="" size="1000" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="checksum" nullable="true" remarks="" size="10" type="int4" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="installed_by" nullable="false" remarks="" size="100" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="now()" digits="6" id="7" name="installed_on" nullable="false" remarks="" size="29" type="timestamp" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="8" name="execution_time" nullable="false" remarks="" size="10" type="int4" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="9" name="success" nullable="false" remarks="" size="1" type="bool" typeCode="-7"/>
+         <primaryKey column="installed_rank" sequenceNumberInPK="1"/>
+         <index name="flyway_schema_history_pk" unique="true">
+            <column ascending="true" name="installed_rank"/>
+         </index>
+         <index name="flyway_schema_history_s_idx" unique="false">
+            <column ascending="true" name="success"/>
+         </index>
+      </table>
+      <table name="project" remarks="Table to store the project data related to a specific request." schema="data_access" type="TABLE">
+         <column autoUpdated="true" defaultValue="nextval('data_access.project_id_seq'::regclass)" digits="0" id="0" name="id" nullable="false" remarks="Primary key, Auto Generated Number by Postgres" size="19" type="bigserial" typeCode="-5">
+            <child column="project_id" foreignKey="request_project_id_fk" implied="false" onDeleteCascade="false" schema="data_access" table="request"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="project_overview" nullable="true" remarks="Description of the project for which access is being requested for" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="documentation_link" nullable="true" remarks="Link to the documentation of the project" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="project_tags" nullable="true" remarks="List of tags for the project. Store all the tags comma separated" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="data_usage_description" nullable="true" remarks="Description of the data usage, how the data will be used/consumed" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="end_user" nullable="true" remarks="Name of the end user" size="2147483647" type="text" typeCode="12"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="project_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+      </table>
+      <table name="request" remarks="Table to store the data access request data and related information." schema="data_access" type="TABLE">
+         <column autoUpdated="true" defaultValue="nextval('data_access.request_id_seq'::regclass)" digits="0" id="0" name="id" nullable="false" remarks="Primary key, Auto Generated Number by Postgres" size="19" type="bigserial" typeCode="-5">
+            <child column="request_id" foreignKey="approval_request_id_fk" implied="false" onDeleteCascade="false" schema="data_access" table="approval"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="project_id" nullable="false" remarks="Foreign key to the project table" size="19" type="int8" typeCode="-5">
+            <parent column="id" foreignKey="request_project_id_fk" implied="false" onDeleteCascade="false" schema="data_access" table="project"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="requester_id" nullable="false" remarks="Foreign key to the requester table" size="19" type="int8" typeCode="-5">
+            <parent column="id" foreignKey="request_requester_id_fk" implied="false" onDeleteCascade="false" schema="data_access" table="requester"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="data_tags" nullable="true" remarks="List of tags for the data. Store all the tags comma separated" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="dataset" nullable="true" remarks="Name of the dataset" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="data_security_classification_id" nullable="false" remarks="Foreign key to the data security classification table" size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="request_data_security_classification_id_fk" implied="false" onDeleteCascade="false" schema="data_access" table="data_security_classification"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="open_data_ind" nullable="true" remarks="Boolean to indicate if the data is open data" size="1" type="bool" typeCode="-7"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="7" name="benefit_to_requester" nullable="true" remarks="Description of the benefit to the requester" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="8" name="read_only_ind" nullable="true" remarks="Boolean to indicate if the data access is read only purposes" size="1" type="bool" typeCode="-7"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="9" name="status_code_id" nullable="false" remarks="Foreign key to the status code table" size="10" type="int4" typeCode="4">
+            <parent column="id" foreignKey="request_status_code_id_fk" implied="false" onDeleteCascade="false" schema="data_access" table="status_code"/>
+         </column>
+         <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="6" id="10" name="create_timestamp" nullable="false" remarks="Date and Time the record was created" size="29" type="timestamp" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="6" id="11" name="update_timestamp" nullable="false" remarks="Date and Time the record was updated" size="29" type="timestamp" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="12" name="create_user" nullable="false" remarks="User who created the record" size="255" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="13" name="update_user" nullable="true" remarks="User who updated the record" size="255" type="varchar" typeCode="12"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="request_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="request_data_security_classification_id_idx" unique="false">
+            <column ascending="true" name="data_security_classification_id"/>
+         </index>
+         <index name="request_project_id_idx" unique="false">
+            <column ascending="true" name="project_id"/>
+         </index>
+         <index name="request_requester_id_idx" unique="false">
+            <column ascending="true" name="requester_id"/>
+         </index>
+         <index name="request_status_code_id_idx" unique="false">
+            <column ascending="true" name="status_code_id"/>
+         </index>
+      </table>
+      <table name="requester" remarks="Table to store the requester data. The IDIR GUID is used to uniquely identify the user." schema="data_access" type="TABLE">
+         <column autoUpdated="true" defaultValue="nextval('data_access.requester_id_seq'::regclass)" digits="0" id="0" name="id" nullable="false" remarks="Primary key" size="19" type="bigserial" typeCode="-5">
+            <child column="requester_id" foreignKey="request_requester_id_fk" implied="false" onDeleteCascade="false" schema="data_access" table="request"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="full_name" nullable="false" remarks="Full Name of the requester" size="255" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="idir" nullable="false" remarks="IDIR name of the requester" size="255" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="idir_guid" nullable="false" remarks="IDIR GUID of the requester, this uniquely identifies the user" size="255" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="email" nullable="false" remarks="Email of the requester" size="255" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="ministry_name" nullable="false" remarks="Name of the ministry the requester belongs to" size="255" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="branch_name" nullable="false" remarks="Name of the branch the requester belongs to" size="255" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="6" id="7" name="create_timestamp" nullable="false" remarks="Date and Time the record was created" size="29" type="timestamp" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="CURRENT_TIMESTAMP" digits="6" id="8" name="update_timestamp" nullable="false" remarks="Date and Time the record was updated" size="29" type="timestamp" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="9" name="create_user" nullable="false" remarks="User who created the record" size="255" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="10" name="update_user" nullable="true" remarks="User who updated the record" size="255" type="varchar" typeCode="12"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="requester_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="requester_email_idx" unique="false">
+            <column ascending="true" name="email"/>
+         </index>
+         <index name="requester_idir_guid_idx" unique="false">
+            <column ascending="true" name="idir_guid"/>
+         </index>
+         <index name="requester_idir_idx" unique="false">
+            <column ascending="true" name="idir"/>
+         </index>
+      </table>
+      <table name="status_code" remarks="Table to store status codes related to the workflows that will take place from submitting a request to the final decision" schema="data_access" type="TABLE">
+         <column autoUpdated="true" defaultValue="nextval('data_access.status_code_id_seq'::regclass)" digits="0" id="0" name="id" nullable="false" remarks="Primary key" size="10" type="serial" typeCode="4">
+            <child column="status_code_id" foreignKey="approval_status_code_id_fk" implied="false" onDeleteCascade="false" schema="data_access" table="approval"/>
+            <child column="status_code_id" foreignKey="request_status_code_id_fk" implied="false" onDeleteCascade="false" schema="data_access" table="request"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="code" nullable="false" remarks="Unique code for the status" size="255" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="description" nullable="false" remarks="Description of the status" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="effective_date" nullable="false" remarks="Date the status becomes effective" size="13" type="date" typeCode="91"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="expiry_date" nullable="true" remarks="Date the status expires" size="13" type="date" typeCode="91"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="status_code_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
+         <index name="status_codes_code_idx" unique="false">
+            <column ascending="true" name="code"/>
+         </index>
+      </table>
+   </tables>
+</database>
