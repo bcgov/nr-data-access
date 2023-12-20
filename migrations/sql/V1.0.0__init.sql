@@ -3,19 +3,21 @@ CREATE SCHEMA IF NOT EXISTS data_access;
 SET SEARCH_PATH TO data_access;
 CREATE TABLE status_code
 (
-    id             SERIAL PRIMARY KEY,
-    code           VARCHAR(255) NOT NULL,
-    description    TEXT         NOT NULL,
-    effective_date DATE         NOT NULL,
-    expiry_date    DATE
+    status_code_id     SERIAL PRIMARY KEY,
+    status_code        VARCHAR(20)  NOT NULL,
+    status_label       VARCHAR(255) NOT NULL,
+    status_description VARCHAR(500) NOT NULL,
+    effective_date     DATE         NOT NULL,
+    expiry_date        DATE
 );
 -- Add index to code column
-CREATE INDEX status_codes_code_idx
-    ON status_code (code);
+CREATE INDEX status_code_status_code_id_idx
+    ON status_code (status_code);
 -- comments on table columns
-COMMENT ON COLUMN status_code.id IS 'Primary key';
-COMMENT ON COLUMN status_code.code IS 'Unique code for the status';
-COMMENT ON COLUMN status_code.description IS 'Description of the status';
+COMMENT ON COLUMN status_code.status_code_id IS 'Primary key';
+COMMENT ON COLUMN status_code.status_code IS 'Unique code for the status, which is for used by the underlying system and mostly for machine readability';
+COMMENT ON COLUMN status_code.status_label IS 'Label of the status, which is Human Readable and will be displayed to the user';
+COMMENT ON COLUMN status_code.status_description IS 'Description of the status, which would contain extra verbose information about the status';
 COMMENT ON COLUMN status_code.effective_date IS 'Date the status becomes effective';
 COMMENT ON COLUMN status_code.expiry_date IS 'Date the status expires';
 -- comments on table
@@ -23,9 +25,9 @@ COMMENT ON TABLE status_code IS 'Table to store status codes related to the work
 
 CREATE TABLE data_security_classification
 (
-    id          SMALLSERIAL PRIMARY KEY,
-    code        VARCHAR(255) NOT NULL,
-    description TEXT         NOT NULL
+    data_security_classification_id SMALLSERIAL PRIMARY KEY,
+    code                            VARCHAR(255) NOT NULL,
+    description                     VARCHAR(500)         NOT NULL
 );
 
 -- Insert multiple rows
@@ -37,36 +39,36 @@ VALUES ('Public', 'No harm to an individual, organization or government'),
 
 CREATE TABLE requester
 (
-    id               BIGSERIAL PRIMARY KEY,
-    full_name        VARCHAR(255) NOT NULL,
-    idir             VARCHAR(255) NOT NULL,
-    idir_guid        VARCHAR(255) NOT NULL,
-    email            VARCHAR(255) NOT NULL,
-    ministry_name    VARCHAR(255) NOT NULL,
-    branch_name      VARCHAR(255) NOT NULL,
-    create_timestamp TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    update_timestamp TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    create_user      VARCHAR(255) NOT NULL,
-    update_user      VARCHAR(255)
+    requester_id            BIGSERIAL PRIMARY KEY,
+    requester_full_name     VARCHAR(255) NOT NULL,
+    requester_idir          VARCHAR(255) NOT NULL,
+    requester_idir_guid     VARCHAR(255) NOT NULL,
+    requester_email         VARCHAR(255) NOT NULL,
+    requester_ministry_name VARCHAR(255) NOT NULL,
+    requester_branch_name   VARCHAR(255) NOT NULL,
+    create_timestamp        TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    update_timestamp        TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    create_user             VARCHAR(255) NOT NULL,
+    update_user             VARCHAR(255)
 );
 -- Add index to idir guid column
-CREATE INDEX requester_idir_guid_idx
-    ON requester (idir_guid);
+CREATE INDEX requester_requester_idir_guid_idx
+    ON requester (requester_idir_guid);
 -- Add index to idir column
-CREATE INDEX requester_idir_idx
-    ON requester (idir);
+CREATE INDEX requester_requester_idir_idx
+    ON requester (requester_idir);
 -- Add index to email column
-CREATE INDEX requester_email_idx
-    ON requester (email);
+CREATE INDEX requester_requester_email_idx
+    ON requester (requester_email);
 
 -- comments on table columns
-COMMENT ON COLUMN requester.id IS 'Primary key';
-COMMENT ON COLUMN requester.full_name IS 'Full Name of the requester';
-COMMENT ON COLUMN requester.idir IS 'IDIR name of the requester';
-COMMENT ON COLUMN requester.idir_guid IS 'IDIR GUID of the requester, this uniquely identifies the user';
-COMMENT ON COLUMN requester.email IS 'Email of the requester';
-COMMENT ON COLUMN requester.ministry_name IS 'Name of the ministry the requester belongs to';
-COMMENT ON COLUMN requester.branch_name IS 'Name of the branch the requester belongs to';
+COMMENT ON COLUMN requester.requester_id IS 'Primary key, Auto Generated Number by Postgres';
+COMMENT ON COLUMN requester.requester_full_name IS 'Full Name of the requester';
+COMMENT ON COLUMN requester.requester_idir IS 'IDIR name of the requester';
+COMMENT ON COLUMN requester.requester_idir_guid IS 'IDIR GUID of the requester, this uniquely identifies the user';
+COMMENT ON COLUMN requester.requester_email IS 'Email of the requester';
+COMMENT ON COLUMN requester.requester_ministry_name IS 'Name of the ministry the requester belongs to';
+COMMENT ON COLUMN requester.requester_branch_name IS 'Name of the ministry branch the requester belongs to';
 COMMENT ON COLUMN requester.create_timestamp IS 'Date and Time the record was created';
 COMMENT ON COLUMN requester.update_timestamp IS 'Date and Time the record was updated';
 COMMENT ON COLUMN requester.create_user IS 'User who created the record';
@@ -77,17 +79,17 @@ COMMENT ON TABLE REQUESTER IS 'Table to store the requester data. The IDIR GUID 
 
 CREATE TABLE project
 (
-    id                     BIGSERIAL PRIMARY KEY,
-    project_overview       TEXT,
-    documentation_link     TEXT,
-    project_tags           TEXT,
-    data_usage_description TEXT,
-    end_user               TEXT
+    project_id                 BIGSERIAL PRIMARY KEY,
+    project_overview           VARCHAR(255),
+    project_documentation_link VARCHAR(255),
+    project_tags               VARCHAR(255),
+    data_usage_description     VARCHAR(500),
+    end_user                   VARCHAR(255)
 );
 -- comments on table columns
-COMMENT ON COLUMN project.id IS 'Primary key, Auto Generated Number by Postgres';
+COMMENT ON COLUMN project.project_id IS 'Primary key, Auto Generated Number by Postgres';
 COMMENT ON COLUMN project.project_overview IS 'Description of the project for which access is being requested for';
-COMMENT ON COLUMN project.documentation_link IS 'Link to the documentation of the project';
+COMMENT ON COLUMN project.project_documentation_link IS 'Link to the documentation of the project';
 COMMENT ON COLUMN project.project_tags IS 'List of tags for the project. Store all the tags comma separated';
 COMMENT ON COLUMN project.data_usage_description IS 'Description of the data usage, how the data will be used/consumed';
 COMMENT ON COLUMN project.end_user IS 'Name of the end user';
@@ -96,14 +98,14 @@ COMMENT ON TABLE PROJECT IS 'Table to store the project data related to a specif
 
 CREATE TABLE request
 (
-    id                              BIGSERIAL PRIMARY KEY,
+    request_id                      BIGSERIAL PRIMARY KEY,
     project_id                      BIGINT       NOT NULL,
     requester_id                    BIGINT       NOT NULL,
-    data_tags                       TEXT,
-    dataset                         TEXT,
+    data_tags                       VARCHAR(255),
+    dataset                         VARCHAR(255),
     data_security_classification_id INT          NOT NULL,
     open_data_ind                   BOOLEAN,
-    benefit_to_requester            TEXT,
+    benefit_to_requester            VARCHAR(255),
     read_only_ind                   BOOLEAN,
     status_code_id                  INT          NOT NULL,
     create_timestamp                TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -144,7 +146,7 @@ CREATE INDEX request_status_code_id_idx
 CREATE INDEX request_data_security_classification_id_idx
     ON request (data_security_classification_id);
 -- comments on table columns
-COMMENT ON COLUMN request.id IS 'Primary key, Auto Generated Number by Postgres';
+COMMENT ON COLUMN request.request_id IS 'Primary key, Auto Generated Number by Postgres';
 COMMENT ON COLUMN request.project_id IS 'Foreign key to the project table';
 COMMENT ON COLUMN request.requester_id IS 'Foreign key to the requester table';
 COMMENT ON COLUMN request.data_tags IS 'List of tags for the data. Store all the tags comma separated';
@@ -161,39 +163,39 @@ COMMENT ON COLUMN request.update_user IS 'User who updated the record';
 -- comments on table
 COMMENT ON TABLE REQUEST IS 'Table to store the data access request data and related information.';
 
-CREATE TABLE approval
+CREATE TABLE request_state
 (
-    id                 BIGSERIAL PRIMARY KEY,
-    request_id         BIGINT    NOT NULL,
-    status_code_id     INT       NOT NULL,
-    approver_idir      VARCHAR(255),
-    approver_idir_guid VARCHAR(255),
-    approver_email     VARCHAR(255),
-    create_timestamp   TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    request_state_id BIGSERIAL PRIMARY KEY,
+    request_id       BIGINT    NOT NULL,
+    status_code_id   INT       NOT NULL,
+    actor_idir       VARCHAR(255),
+    actor_idir_guid  VARCHAR(255),
+    actor_email      VARCHAR(255),
+    create_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 -- Add foreign key to request table
-ALTER TABLE approval
-    ADD CONSTRAINT approval_request_id_fk
+ALTER TABLE request_state
+    ADD CONSTRAINT request_state_request_id_fk
         FOREIGN KEY (request_id)
-            REFERENCES request (id);
+            REFERENCES request (request_id);
 -- Add foreign key to status code table
-ALTER TABLE approval
+ALTER TABLE request_state
     ADD CONSTRAINT approval_status_code_id_fk
         FOREIGN KEY (status_code_id)
             REFERENCES status_code (id);
 -- Add index to foreign key
 CREATE INDEX approval_request_id_idx
-    ON approval (request_id);
+    ON request_state (request_id);
 -- Add index to foreign key
 CREATE INDEX approval_status_code_id_idx
-    ON approval (status_code_id);
+    ON request_state (status_code_id);
 -- comments on table columns
-COMMENT ON COLUMN approval.id IS 'Primary key, Auto Generated Number by Postgres';
-COMMENT ON COLUMN approval.request_id IS 'Foreign key to the request table';
-COMMENT ON COLUMN approval.status_code_id IS 'Foreign key to the status code table';
-COMMENT ON COLUMN approval.approver_idir IS 'IDIR name of the person who approved the request, it is combined with status as there could be multiple levels of approval (DBA, Security, etc)';
-COMMENT ON COLUMN approval.approver_idir_guid IS 'IDIR GUID of the person who approved the request, it is combined with status as there could be multiple levels of approval (DBA, Security, etc)';
-COMMENT ON COLUMN approval.approver_email IS 'Email of the person who approved the request, it is combined with status as there could be multiple levels of approval (DBA, Security, etc)';
+COMMENT ON COLUMN request_state.request_state_id IS 'Primary key, Auto Generated Number by Postgres';
+COMMENT ON COLUMN request_state.request_id IS 'Foreign key to the request table';
+COMMENT ON COLUMN request_state.status_code_id IS 'Foreign key to the status code table';
+COMMENT ON COLUMN request_state.actor_idir IS 'IDIR name of the person who acted the request, it is combined with status as  the actor could be from different group (DBA, Security, etc)';
+COMMENT ON COLUMN request_state.actor_idir_guid IS 'IDIR GUID of the actor who acted on the request, it is combined with status as the actor could be from different group (DBA, Security, etc)';
+COMMENT ON COLUMN request_state.actor_email IS 'Email of the person who approved the request, it is combined with status as the actor could be from different group (DBA, Security, etc)';
 -- comments on table
-COMMENT ON TABLE APPROVAL IS 'Table to store the approval data. For each state of Approval (Data Custodian, DBA, Security) a new row will be inserted to this table. It servers the purpose of tracking the approval process.';
+COMMENT ON TABLE request_state IS 'Table to store the request state change data. For each state change  a new row will be inserted to this table. It serves the purpose of tracking the Approval/Denial process.';
 
