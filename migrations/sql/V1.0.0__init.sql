@@ -117,22 +117,22 @@ CREATE TABLE request
 ALTER TABLE request
     ADD CONSTRAINT request_project_id_fk
         FOREIGN KEY (project_id)
-            REFERENCES project (id);
+            REFERENCES project (project_id);
 -- Add foreign key to requester table
 ALTER TABLE request
     ADD CONSTRAINT request_requester_id_fk
         FOREIGN KEY (requester_id)
-            REFERENCES requester (id);
+            REFERENCES requester (requester_id);
 -- Add foreign key to status code table
 ALTER TABLE request
     ADD CONSTRAINT request_status_code_id_fk
         FOREIGN KEY (status_code_id)
-            REFERENCES status_code (id);
+            REFERENCES status_code (status_code_id);
 -- Add foreign key to data security classification table
 ALTER TABLE request
     ADD CONSTRAINT request_data_security_classification_id_fk
         FOREIGN KEY (data_security_classification_id)
-            REFERENCES data_security_classification (id);
+            REFERENCES data_security_classification (data_security_classification_id);
 -- Add index to foreign key
 CREATE INDEX request_project_id_idx
     ON request (project_id);
@@ -182,7 +182,7 @@ ALTER TABLE request_state
 ALTER TABLE request_state
     ADD CONSTRAINT approval_status_code_id_fk
         FOREIGN KEY (status_code_id)
-            REFERENCES status_code (id);
+            REFERENCES status_code (status_code_id);
 -- Add index to foreign key
 CREATE INDEX approval_request_id_idx
     ON request_state (request_id);
