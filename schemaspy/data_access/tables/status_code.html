@@ -122,22 +122,22 @@
                                 </thead>
                                 <tbody>
                                 <tr>
-                                    <td class='primaryKey' title='Primary Key'><i class='icon ion-key iconkey' style='padding-left: 5px;'></i><span id="id">id</span></td>
+                                    <td class='primaryKey' title='Primary Key'><i class='icon ion-key iconkey' style='padding-left: 5px;'></i><span id="status_code_id">status_code_id</span></td>
                                     <td>serial</td>
                                     <td>10</td>
                                     <td title=''></td>
                                     <td title='Automatically updated by the database'>√</td>
-                                    <td>nextval(&#39;data_access.status_code_id_seq&#39;::regclass)</td>
+                                    <td>nextval(&#39;data_access.status_code_status_code_id_seq&#39;::regclass)</td>
                                     <td>
                                         <table border='0' cellspacing='0' cellpadding='0'>
                                             <tr>
-                                                <td title="approval.status_code_id references status_code.id via approval_status_code_id_fk"><a href='approval.html'>approval</a><span class='relatedKey'>.status_code_id</span></td>
-                                                <td class="constraint detail">approval_status_code_id_fk</td>
+                                                <td title="request.status_code_id references status_code.status_code_id via request_status_code_id_fk"><a href='request.html'>request</a><span class='relatedKey'>.status_code_id</span></td>
+                                                <td class="constraint detail">request_status_code_id_fk</td>
                                                 <td class="constraint detail"><span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
                                             </tr>
                                             <tr>
-                                                <td title="request.status_code_id references status_code.id via request_status_code_id_fk"><a href='request.html'>request</a><span class='relatedKey'>.status_code_id</span></td>
-                                                <td class="constraint detail">request_status_code_id_fk</td>
+                                                <td title="request_state.status_code_id references status_code.status_code_id via approval_status_code_id_fk"><a href='request_state.html'>request_state</a><span class='relatedKey'>.status_code_id</span></td>
+                                                <td class="constraint detail">approval_status_code_id_fk</td>
                                                 <td class="constraint detail"><span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
                                             </tr>
                                         </table>
@@ -149,7 +149,24 @@
                                     <td><p>Primary key</p></td>
                                 </tr>
                                 <tr>
-                                    <td class='indexedColumn' title='Indexed'><i class='fa fa-sitemap fa-rotate-120' style='padding-right: 5px;'></i><span id="code">code</span></td>
+                                    <td class='indexedColumn' title='Indexed'><i class='fa fa-sitemap fa-rotate-120' style='padding-right: 5px;'></i><span id="status_code">status_code</span></td>
+                                    <td>varchar</td>
+                                    <td>20</td>
+                                    <td title=''></td>
+                                    <td title=''></td>
+                                    <td>null</td>
+                                    <td>
+                                        <table border='0' cellspacing='0' cellpadding='0'>
+                                        </table>
+                                    </td>
+                                    <td>
+                                        <table border='0' cellspacing='0' cellpadding='0'>
+                                        </table>
+                                    </td>
+                                    <td><p>Unique code for the status, which is for used by the underlying system and mostly for machine readability</p></td>
+                                </tr>
+                                <tr>
+                                    <td><span id="status_label">status_label</span></td>
                                     <td>varchar</td>
                                     <td>255</td>
                                     <td title=''></td>
@@ -163,12 +180,12 @@
                                         <table border='0' cellspacing='0' cellpadding='0'>
                                         </table>
                                     </td>
-                                    <td><p>Unique code for the status</p></td>
+                                    <td><p>Label of the status, which is Human Readable and will be displayed to the user</p></td>
                                 </tr>
                                 <tr>
-                                    <td><span id="description">description</span></td>
-                                    <td>text</td>
-                                    <td>2147483647</td>
+                                    <td><span id="status_description">status_description</span></td>
+                                    <td>varchar</td>
+                                    <td>500</td>
                                     <td title=''></td>
                                     <td title=''></td>
                                     <td>null</td>
@@ -180,7 +197,7 @@
                                         <table border='0' cellspacing='0' cellpadding='0'>
                                         </table>
                                     </td>
-                                    <td><p>Description of the status</p></td>
+                                    <td><p>Description of the status, which would contain extra verbose information about the status</p></td>
                                 </tr>
                                 <tr>
                                     <td><span id="effective_date">effective_date</span></td>
@@ -250,13 +267,13 @@
                                     <td class='primaryKey' title='Primary Key'><i class='icon ion-key iconkey'></i> status_code_pkey</td>
                                     <td>Primary key</td>
                                     <td><span title='Ascending'>Asc</span></td>
-                                    <td>id</td>
+                                    <td>status_code_id</td>
                                 </tr>
                                 <tr>
-                                    <td title='Indexed'>status_codes_code_idx</td>
+                                    <td title='Indexed'>status_code_status_code_id_idx</td>
                                     <td>Performance</td>
                                     <td><span title='Ascending'>Asc</span></td>
-                                    <td>code</td>
+                                    <td>status_code</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -281,20 +298,20 @@
                                 <div class="tab-content no-padding">
                                     <div class="chart tab-pane active" id="oneDegreeImg-chart" style="position: relative; overflow-x:auto;">
                                         <map id="oneDegreeRelationshipsDiagram" name="oneDegreeRelationshipsDiagram">
-<area shape="rect" id="node1" href="approval.html" target="_top" title="approval" alt="" coords="675,68,871,244">
-<area shape="rect" id="node2" href="request.html" target="_top" title="request" alt="" coords="341,5,631,240">
-<area shape="rect" id="node3" href="status_code.html" target="_top" title="status_code" alt="" coords="5,168,297,384">
+<area shape="rect" id="node1" href="request.html" target="_top" title="request" alt="" coords="344,5,633,240">
+<area shape="rect" id="node2" href="status_code.html" target="_top" title="status_code" alt="" coords="5,168,300,413">
+<area shape="rect" id="node3" href="request_state.html" target="_top" title="request_state" alt="" coords="677,68,871,244">
 </map>
                                         <a name='diagram'><img id="oneDegreeImg" src="../diagrams/tables/status_code.1degree.png" usemap="#oneDegreeRelationshipsDiagram" class="diagram" border="0" align="left"></a>
                                     </div>
                                     <div class="chart tab-pane " id="twodegreesDegreeImg-chart" style="position: relative; overflow-x:auto;">
                                         <map id="twoDegreesRelationshipsDiagram" name="twoDegreesRelationshipsDiagram">
-<area shape="rect" id="node1" href="approval.html" target="_top" title="approval" alt="" coords="533,167,684,255">
-<area shape="rect" id="node2" href="request.html" target="_top" title="request" alt="" coords="348,241,489,329">
-<area shape="rect" id="node3" href="status_code.html" target="_top" title="status_code" alt="" coords="9,5,301,221">
-<area shape="rect" id="node4" href="data_security_classification.html" target="_top" title="data_security_classification" alt="" coords="5,239,304,327">
-<area shape="rect" id="node5" href="project.html" target="_top" title="project" alt="" coords="87,344,223,432">
-<area shape="rect" id="node6" href="requester.html" target="_top" title="requester" alt="" coords="76,449,233,537">
+<area shape="rect" id="node1" href="request.html" target="_top" title="request" alt="" coords="348,219,489,307">
+<area shape="rect" id="node2" href="data_security_classification.html" target="_top" title="data_security_classification" alt="" coords="5,5,304,93">
+<area shape="rect" id="node3" href="project.html" target="_top" title="project" alt="" coords="87,111,223,199">
+<area shape="rect" id="node4" href="requester.html" target="_top" title="requester" alt="" coords="76,216,233,304">
+<area shape="rect" id="node5" href="status_code.html" target="_top" title="status_code" alt="" coords="7,321,302,567">
+<area shape="rect" id="node6" href="request_state.html" target="_top" title="request_state" alt="" coords="533,275,721,363">
 </map>
                                         <a name='diagram'><img id="twodegreesDegreeImg" src="../diagrams/tables/status_code.2degrees.png" usemap="#twoDegreesRelationshipsDiagram" class="diagram" border="0" align="left"></a>
                                     </div>

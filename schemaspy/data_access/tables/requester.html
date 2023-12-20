@@ -122,16 +122,16 @@
                                 </thead>
                                 <tbody>
                                 <tr>
-                                    <td class='primaryKey' title='Primary Key'><i class='icon ion-key iconkey' style='padding-left: 5px;'></i><span id="id">id</span></td>
+                                    <td class='primaryKey' title='Primary Key'><i class='icon ion-key iconkey' style='padding-left: 5px;'></i><span id="requester_id">requester_id</span></td>
                                     <td>bigserial</td>
                                     <td>19</td>
                                     <td title=''></td>
                                     <td title='Automatically updated by the database'>√</td>
-                                    <td>nextval(&#39;data_access.requester_id_seq&#39;::regclass)</td>
+                                    <td>nextval(&#39;data_access.requester_requester_id_seq&#39;::regclass)</td>
                                     <td>
                                         <table border='0' cellspacing='0' cellpadding='0'>
                                             <tr>
-                                                <td title="request.requester_id references requester.id via request_requester_id_fk"><a href='request.html'>request</a><span class='relatedKey'>.requester_id</span></td>
+                                                <td title="request.requester_id references requester.requester_id via request_requester_id_fk"><a href='request.html'>request</a><span class='relatedKey'>.requester_id</span></td>
                                                 <td class="constraint detail">request_requester_id_fk</td>
                                                 <td class="constraint detail"><span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
                                             </tr>
@@ -141,10 +141,10 @@
                                         <table border='0' cellspacing='0' cellpadding='0'>
                                         </table>
                                     </td>
-                                    <td><p>Primary key</p></td>
+                                    <td><p>Primary key, Auto Generated Number by Postgres</p></td>
                                 </tr>
                                 <tr>
-                                    <td><span id="full_name">full_name</span></td>
+                                    <td><span id="requester_full_name">requester_full_name</span></td>
                                     <td>varchar</td>
                                     <td>255</td>
                                     <td title=''></td>
@@ -161,7 +161,7 @@
                                     <td><p>Full Name of the requester</p></td>
                                 </tr>
                                 <tr>
-                                    <td class='indexedColumn' title='Indexed'><i class='fa fa-sitemap fa-rotate-120' style='padding-right: 5px;'></i><span id="idir">idir</span></td>
+                                    <td class='indexedColumn' title='Indexed'><i class='fa fa-sitemap fa-rotate-120' style='padding-right: 5px;'></i><span id="requester_idir">requester_idir</span></td>
                                     <td>varchar</td>
                                     <td>255</td>
                                     <td title=''></td>
@@ -178,7 +178,7 @@
                                     <td><p>IDIR name of the requester</p></td>
                                 </tr>
                                 <tr>
-                                    <td class='indexedColumn' title='Indexed'><i class='fa fa-sitemap fa-rotate-120' style='padding-right: 5px;'></i><span id="idir_guid">idir_guid</span></td>
+                                    <td class='indexedColumn' title='Indexed'><i class='fa fa-sitemap fa-rotate-120' style='padding-right: 5px;'></i><span id="requester_idir_guid">requester_idir_guid</span></td>
                                     <td>varchar</td>
                                     <td>255</td>
                                     <td title=''></td>
@@ -195,7 +195,7 @@
                                     <td><p>IDIR GUID of the requester, this uniquely identifies the user</p></td>
                                 </tr>
                                 <tr>
-                                    <td class='indexedColumn' title='Indexed'><i class='fa fa-sitemap fa-rotate-120' style='padding-right: 5px;'></i><span id="email">email</span></td>
+                                    <td class='indexedColumn' title='Indexed'><i class='fa fa-sitemap fa-rotate-120' style='padding-right: 5px;'></i><span id="requester_email">requester_email</span></td>
                                     <td>varchar</td>
                                     <td>255</td>
                                     <td title=''></td>
@@ -212,7 +212,7 @@
                                     <td><p>Email of the requester</p></td>
                                 </tr>
                                 <tr>
-                                    <td><span id="ministry_name">ministry_name</span></td>
+                                    <td><span id="requester_ministry_name">requester_ministry_name</span></td>
                                     <td>varchar</td>
                                     <td>255</td>
                                     <td title=''></td>
@@ -229,7 +229,7 @@
                                     <td><p>Name of the ministry the requester belongs to</p></td>
                                 </tr>
                                 <tr>
-                                    <td><span id="branch_name">branch_name</span></td>
+                                    <td><span id="requester_branch_name">requester_branch_name</span></td>
                                     <td>varchar</td>
                                     <td>255</td>
                                     <td title=''></td>
@@ -243,7 +243,7 @@
                                         <table border='0' cellspacing='0' cellpadding='0'>
                                         </table>
                                     </td>
-                                    <td><p>Name of the branch the requester belongs to</p></td>
+                                    <td><p>Name of the ministry branch the requester belongs to</p></td>
                                 </tr>
                                 <tr>
                                     <td><span id="create_timestamp">create_timestamp</span></td>
@@ -347,25 +347,25 @@
                                     <td class='primaryKey' title='Primary Key'><i class='icon ion-key iconkey'></i> requester_pkey</td>
                                     <td>Primary key</td>
                                     <td><span title='Ascending'>Asc</span></td>
-                                    <td>id</td>
+                                    <td>requester_id</td>
                                 </tr>
                                 <tr>
-                                    <td title='Indexed'>requester_email_idx</td>
+                                    <td title='Indexed'>requester_requester_email_idx</td>
                                     <td>Performance</td>
                                     <td><span title='Ascending'>Asc</span></td>
-                                    <td>email</td>
+                                    <td>requester_email</td>
                                 </tr>
                                 <tr>
-                                    <td title='Indexed'>requester_idir_guid_idx</td>
+                                    <td title='Indexed'>requester_requester_idir_guid_idx</td>
                                     <td>Performance</td>
                                     <td><span title='Ascending'>Asc</span></td>
-                                    <td>idir_guid</td>
+                                    <td>requester_idir_guid</td>
                                 </tr>
                                 <tr>
-                                    <td title='Indexed'>requester_idir_idx</td>
+                                    <td title='Indexed'>requester_requester_idir_idx</td>
                                     <td>Performance</td>
                                     <td><span title='Ascending'>Asc</span></td>
-                                    <td>idir</td>
+                                    <td>requester_idir</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -390,19 +390,19 @@
                                 <div class="tab-content no-padding">
                                     <div class="chart tab-pane active" id="oneDegreeImg-chart" style="position: relative; overflow-x:auto;">
                                         <map id="oneDegreeRelationshipsDiagram" name="oneDegreeRelationshipsDiagram">
-<area shape="rect" id="node1" href="request.html" target="_top" title="request" alt="" coords="376,5,665,240">
-<area shape="rect" id="node2" href="requester.html" target="_top" title="requester" alt="" coords="5,61,332,453">
+<area shape="rect" id="node1" href="request.html" target="_top" title="request" alt="" coords="429,5,719,240">
+<area shape="rect" id="node2" href="requester.html" target="_top" title="requester" alt="" coords="5,61,385,453">
 </map>
                                         <a name='diagram'><img id="oneDegreeImg" src="../diagrams/tables/requester.1degree.png" usemap="#oneDegreeRelationshipsDiagram" class="diagram" border="0" align="left"></a>
                                     </div>
                                     <div class="chart tab-pane " id="twodegreesDegreeImg-chart" style="position: relative; overflow-x:auto;">
                                         <map id="twoDegreesRelationshipsDiagram" name="twoDegreesRelationshipsDiagram">
-<area shape="rect" id="node1" href="approval.html" target="_top" title="approval" alt="" coords="709,520,860,608">
-<area shape="rect" id="node2" href="request.html" target="_top" title="request" alt="" coords="376,411,665,645">
-<area shape="rect" id="node3" href="status_code.html" target="_top" title="status_code" alt="" coords="82,625,255,713">
-<area shape="rect" id="node4" href="data_security_classification.html" target="_top" title="data_security_classification" alt="" coords="19,520,318,608">
-<area shape="rect" id="node5" href="project.html" target="_top" title="project" alt="" coords="101,5,237,93">
-<area shape="rect" id="node6" href="requester.html" target="_top" title="requester" alt="" coords="5,111,332,503">
+<area shape="rect" id="node1" href="request.html" target="_top" title="request" alt="" coords="429,411,719,645">
+<area shape="rect" id="node2" href="data_security_classification.html" target="_top" title="data_security_classification" alt="" coords="46,520,345,608">
+<area shape="rect" id="node3" href="project.html" target="_top" title="project" alt="" coords="127,5,263,93">
+<area shape="rect" id="node4" href="requester.html" target="_top" title="requester" alt="" coords="5,111,385,503">
+<area shape="rect" id="node5" href="status_code.html" target="_top" title="status_code" alt="" coords="109,625,282,713">
+<area shape="rect" id="node6" href="request_state.html" target="_top" title="request_state" alt="" coords="763,520,951,608">
 </map>
                                         <a name='diagram'><img id="twodegreesDegreeImg" src="../diagrams/tables/requester.2degrees.png" usemap="#twoDegreesRelationshipsDiagram" class="diagram" border="0" align="left"></a>
                                     </div>

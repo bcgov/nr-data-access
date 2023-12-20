@@ -3,5 +3,5 @@ data_security_classification
 project
 requester
 request
-approval
+request_state
 flyway_schema_history

@@ -1,5 +1,5 @@
 flyway_schema_history
-approval
+request_state
 request
 requester
 project

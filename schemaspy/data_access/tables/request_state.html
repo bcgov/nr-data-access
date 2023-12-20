@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>approval - default.data_access</title>
+        <title>request_state - default.data_access</title>
         <!-- Tell the browser to be responsive to screen width -->
         <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
         <link rel="icon" type="image/png" sizes="16x16" href="../favicon.png">
@@ -73,7 +73,7 @@
             <div class="content-wrapper">
                 <!-- Content Header (Page header) -->
                 <section class="content-header">
-                    <h1>approval</h1><p><span id="recordNumber">-1</span> rows</p><br />
+                    <h1>request_state</h1><p><span id="recordNumber">-1</span> rows</p><br />
                     <div class="box box-primary">
                         <div class="box-header with-border">
                             <i class="fa fa-file-text-o"></i>
@@ -84,7 +84,7 @@
                             </div>
                         </div><!-- /.box-header -->
                         <div class="box-body clearfix">
-                            <p>Table to store the approval data. For each state of Approval (Data Custodian, DBA, Security) a new row will be inserted to this table. It servers the purpose of tracking the approval process.</p>
+                            <p>Table to store the request state change data. For each state change  a new row will be inserted to this table. It serves the purpose of tracking the Approval/Denial process.</p>
                         </div><!-- /.box-body -->
                     </div>
                 </section>
@@ -122,12 +122,12 @@
                                 </thead>
                                 <tbody>
                                 <tr>
-                                    <td class='primaryKey' title='Primary Key'><i class='icon ion-key iconkey' style='padding-left: 5px;'></i><span id="id">id</span></td>
+                                    <td class='primaryKey' title='Primary Key'><i class='icon ion-key iconkey' style='padding-left: 5px;'></i><span id="request_state_id">request_state_id</span></td>
                                     <td>bigserial</td>
                                     <td>19</td>
                                     <td title=''></td>
                                     <td title='Automatically updated by the database'>√</td>
-                                    <td>nextval(&#39;data_access.approval_id_seq&#39;::regclass)</td>
+                                    <td>nextval(&#39;data_access.request_state_request_state_id_seq&#39;::regclass)</td>
                                     <td>
                                         <table border='0' cellspacing='0' cellpadding='0'>
                                         </table>
@@ -152,8 +152,8 @@
                                     <td>
                                         <table border='0' cellspacing='0' cellpadding='0'>
                                             <tr>
-                                                <td title="approval.request_id references request.id via approval_request_id_fk"><a href='request.html'>request</a><span class='relatedKey'>.id</span></td>
-                                                <td class="constraint detail">approval_request_id_fk</td>
+                                                <td title="request_state.request_id references request.request_id via request_state_request_id_fk"><a href='request.html'>request</a><span class='relatedKey'>.request_id</span></td>
+                                                <td class="constraint detail">request_state_request_id_fk</td>
                                                 <td class="constraint detail"><span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
                                             </tr>
                                         </table>
@@ -174,7 +174,7 @@
                                     <td>
                                         <table border='0' cellspacing='0' cellpadding='0'>
                                             <tr>
-                                                <td title="approval.status_code_id references status_code.id via approval_status_code_id_fk"><a href='status_code.html'>status_code</a><span class='relatedKey'>.id</span></td>
+                                                <td title="request_state.status_code_id references status_code.status_code_id via approval_status_code_id_fk"><a href='status_code.html'>status_code</a><span class='relatedKey'>.status_code_id</span></td>
                                                 <td class="constraint detail">approval_status_code_id_fk</td>
                                                 <td class="constraint detail"><span title='Restrict delete:&#10;Parent cannot be deleted if children exist'>R</span></td>
                                             </tr>
@@ -183,7 +183,7 @@
                                     <td><p>Foreign key to the status code table</p></td>
                                 </tr>
                                 <tr>
-                                    <td><span id="approver_idir">approver_idir</span></td>
+                                    <td><span id="actor_idir">actor_idir</span></td>
                                     <td>varchar</td>
                                     <td>255</td>
                                     <td title='nullable'>√</td>
@@ -197,10 +197,10 @@
                                         <table border='0' cellspacing='0' cellpadding='0'>
                                         </table>
                                     </td>
-                                    <td><p>IDIR name of the person who approved the request, it is combined with status as there could be multiple levels of approval (DBA, Security, etc)</p></td>
+                                    <td><p>IDIR name of the person who acted the request, it is combined with status as  the actor could be from different group (DBA, Security, etc)</p></td>
                                 </tr>
                                 <tr>
-                                    <td><span id="approver_idir_guid">approver_idir_guid</span></td>
+                                    <td><span id="actor_idir_guid">actor_idir_guid</span></td>
                                     <td>varchar</td>
                                     <td>255</td>
                                     <td title='nullable'>√</td>
@@ -214,10 +214,10 @@
                                         <table border='0' cellspacing='0' cellpadding='0'>
                                         </table>
                                     </td>
-                                    <td><p>IDIR GUID of the person who approved the request, it is combined with status as there could be multiple levels of approval (DBA, Security, etc)</p></td>
+                                    <td><p>IDIR GUID of the actor who acted on the request, it is combined with status as the actor could be from different group (DBA, Security, etc)</p></td>
                                 </tr>
                                 <tr>
-                                    <td><span id="approver_email">approver_email</span></td>
+                                    <td><span id="actor_email">actor_email</span></td>
                                     <td>varchar</td>
                                     <td>255</td>
                                     <td title='nullable'>√</td>
@@ -231,7 +231,7 @@
                                         <table border='0' cellspacing='0' cellpadding='0'>
                                         </table>
                                     </td>
-                                    <td><p>Email of the person who approved the request, it is combined with status as there could be multiple levels of approval (DBA, Security, etc)</p></td>
+                                    <td><p>Email of the person who approved the request, it is combined with status as the actor could be from different group (DBA, Security, etc)</p></td>
                                 </tr>
                                 <tr>
                                     <td><span id="create_timestamp">create_timestamp</span></td>
@@ -281,10 +281,10 @@
                                 </thead>
                                 <tbody>
                                 <tr>
-                                    <td class='primaryKey' title='Primary Key'><i class='icon ion-key iconkey'></i> approval_pkey</td>
+                                    <td class='primaryKey' title='Primary Key'><i class='icon ion-key iconkey'></i> request_state_pkey</td>
                                     <td>Primary key</td>
                                     <td><span title='Ascending'>Asc</span></td>
-                                    <td>id</td>
+                                    <td>request_state_id</td>
                                 </tr>
                                 <tr>
                                     <td title='Indexed'>approval_request_id_idx</td>
@@ -321,22 +321,22 @@
                                 <div class="tab-content no-padding">
                                     <div class="chart tab-pane active" id="oneDegreeImg-chart" style="position: relative; overflow-x:auto;">
                                         <map id="oneDegreeRelationshipsDiagram" name="oneDegreeRelationshipsDiagram">
-<area shape="rect" id="node1" href="approval.html" target="_top" title="approval" alt="" coords="556,65,879,340">
-<area shape="rect" id="node2" href="request.html" target="_top" title="request" alt="" coords="223,5,512,240">
-<area shape="rect" id="node3" href="status_code.html" target="_top" title="status_code" alt="" coords="5,171,179,317">
+<area shape="rect" id="node1" href="request.html" target="_top" title="request" alt="" coords="245,5,535,240">
+<area shape="rect" id="node2" href="status_code.html" target="_top" title="status_code" alt="" coords="5,171,201,317">
+<area shape="rect" id="node3" href="request_state.html" target="_top" title="request_state" alt="" coords="579,65,899,340">
 </map>
-                                        <a name='diagram'><img id="oneDegreeImg" src="../diagrams/tables/approval.1degree.png" usemap="#oneDegreeRelationshipsDiagram" class="diagram" border="0" align="left"></a>
+                                        <a name='diagram'><img id="oneDegreeImg" src="../diagrams/tables/request_state.1degree.png" usemap="#oneDegreeRelationshipsDiagram" class="diagram" border="0" align="left"></a>
                                     </div>
                                     <div class="chart tab-pane " id="twodegreesDegreeImg-chart" style="position: relative; overflow-x:auto;">
                                         <map id="twoDegreesRelationshipsDiagram" name="twoDegreesRelationshipsDiagram">
-<area shape="rect" id="node1" href="approval.html" target="_top" title="approval" alt="" coords="533,209,856,484">
-<area shape="rect" id="node2" href="request.html" target="_top" title="request" alt="" coords="348,219,489,307">
-<area shape="rect" id="node3" href="status_code.html" target="_top" title="status_code" alt="" coords="68,321,241,409">
-<area shape="rect" id="node4" href="data_security_classification.html" target="_top" title="data_security_classification" alt="" coords="5,111,304,199">
-<area shape="rect" id="node5" href="project.html" target="_top" title="project" alt="" coords="87,216,223,304">
-<area shape="rect" id="node6" href="requester.html" target="_top" title="requester" alt="" coords="76,5,233,93">
+<area shape="rect" id="node1" href="request.html" target="_top" title="request" alt="" coords="348,219,489,307">
+<area shape="rect" id="node2" href="data_security_classification.html" target="_top" title="data_security_classification" alt="" coords="5,5,304,93">
+<area shape="rect" id="node3" href="project.html" target="_top" title="project" alt="" coords="87,111,223,199">
+<area shape="rect" id="node4" href="requester.html" target="_top" title="requester" alt="" coords="76,216,233,304">
+<area shape="rect" id="node5" href="status_code.html" target="_top" title="status_code" alt="" coords="68,321,241,409">
+<area shape="rect" id="node6" href="request_state.html" target="_top" title="request_state" alt="" coords="533,209,853,484">
 </map>
-                                        <a name='diagram'><img id="twodegreesDegreeImg" src="../diagrams/tables/approval.2degrees.png" usemap="#twoDegreesRelationshipsDiagram" class="diagram" border="0" align="left"></a>
+                                        <a name='diagram'><img id="twodegreesDegreeImg" src="../diagrams/tables/request_state.2degrees.png" usemap="#twoDegreesRelationshipsDiagram" class="diagram" border="0" align="left"></a>
                                     </div>
                                 </div>
                             </div>
