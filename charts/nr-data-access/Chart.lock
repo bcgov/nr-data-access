@@ -1,15 +1,15 @@
 dependencies:
 - name: component
   repository: https://bcgov.github.io/helm-service
-  version: 0.2.3
+  version: 0.3.0
 - name: component
   repository: https://bcgov.github.io/helm-service
-  version: 0.2.3
+  version: 0.3.0
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
-  version: 13.2.24
+  version: 13.4.4
 - name: component
   repository: https://bcgov.github.io/helm-service
-  version: 0.2.3
-digest: sha256:727808033e0ecc0317a30f648512047819821dacd660e4cff753bff184906127
-generated: "2023-12-08T22:48:36.13969685Z"
+  version: 0.3.0
+digest: sha256:f7a5c574c854ded6d1270052ddc6780416883aa1fbc2f9cc8fd8127bf51718ef
+generated: "2024-02-01T09:04:22.192957775Z"
